@@ -21,32 +21,20 @@ jobs:
         java-version: '21'
         distribution: 'temurin'
 
-    - name: Set up Android SDK
-      uses: android-actions/setup-android@v3
-
-    - name: Accept Android SDK Licenses & Install SDK 36
-      run: |
-        yes | sdkmanager --licenses || true
-        sdkmanager "platforms;android-36" "build-tools;36.0.0" || true
-
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@v4
       with:
         gradle-version: '8.11.1'
 
-    - name: Ensure Valid Debug Keystore
+    - name: Accept Android SDK Licenses
       run: |
-        if [ -f "debug.keystore.base64" ]; then
-          python3 -c "import base64; open('debug.keystore', 'wb').write(base64.b64decode(open('debug.keystore.base64').read().strip()))" 2>/dev/null || true
-        fi
-        if [ ! -f "debug.keystore" ] || ! keytool -list -keystore debug.keystore -storepass android >/dev/null 2>&1; then
-          echo "Generating fresh valid debug.keystore..."
-          rm -f debug.keystore
-          keytool -genkeypair -v -keystore debug.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US"
-        fi
+        mkdir -p "$ANDROID_HOME/licenses"
+        echo -e "\n243330a27d3d06757b71010b0058477d2861ee34\n570293009d3d01231f57b242f08541b1ee428202\nd56f51874770516002016303ac646fe264873d32\n89330172875f450e10976195863464296d118230\n73f7d9d561437a909f54d8b6732915c616f3c022\n33b6a2b64925e822f518aea668693a02f634f534\n6010071016f40030000000000000000000000000" > "$ANDROID_HOME/licenses/android-sdk-license"
+        echo -e "\n84831b9409646a918e30573bab4c9c91346d8abd" > "$ANDROID_HOME/licenses/android-sdk-preview-license"
+        yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
 
     - name: Build Debug APK
-      run: gradle assembleDebug --stacktrace --no-configuration-cache
+      run: gradle assembleDebug --stacktrace
 
     - name: Upload Debug APK Artifact
       uses: actions/upload-artifact@v4
