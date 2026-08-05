@@ -15,23 +15,16 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@v4
 
-    - name: Set up JDK 21
+    - name: Set up JDK 17
       uses: actions/setup-java@v4
       with:
-        java-version: '21'
+        java-version: '17'
         distribution: 'temurin'
 
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@v4
       with:
         gradle-version: '8.11.1'
-
-    - name: Accept Android SDK Licenses
-      run: |
-        mkdir -p "$ANDROID_HOME/licenses"
-        echo -e "\n243330a27d3d06757b71010b0058477d2861ee34\n570293009d3d01231f57b242f08541b1ee428202\nd56f51874770516002016303ac646fe264873d32\n89330172875f450e10976195863464296d118230\n73f7d9d561437a909f54d8b6732915c616f3c022\n33b6a2b64925e822f518aea668693a02f634f534\n6010071016f40030000000000000000000000000" > "$ANDROID_HOME/licenses/android-sdk-license"
-        echo -e "\n84831b9409646a918e30573bab4c9c91346d8abd" > "$ANDROID_HOME/licenses/android-sdk-preview-license"
-        yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
 
     - name: Build Debug APK
       run: gradle assembleDebug --stacktrace
@@ -42,3 +35,4 @@ jobs:
         name: TahajjudPulse-Debug-APK
         path: app/build/outputs/apk/debug/app-debug.apk
         retention-days: 14
+
