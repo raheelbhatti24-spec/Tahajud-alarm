@@ -1,0 +1,6 @@
+{
+  "name": "Tahajjud Pulse",
+  "description": "Sleep tracking and smart Tahajjud alarm that detects when you fall asleep with gentle check-in tings and wakes you for night prayer.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
